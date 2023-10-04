@@ -33,7 +33,7 @@ def choose_reward():
         cumulative_prob += prob
         if rand_num <= cumulative_prob:
             return reward
-
+        
 @app.route("/", methods=["GET", "POST"])
 def index():
     global drawn_weapons
@@ -44,15 +44,15 @@ def index():
         # 무기 뽑기
         drawn_weapons = [choose_reward() for _ in range(num_draws)]
 
-        return "\n".join(drawn_weapons)  # 각 무기를 개행 문자로 연결한 문자열 반환
+        return jsonify(drawn_weapons=drawn_weapons)
 
-    return render_template("start.html")
+    return render_template("start.html", drawn_weapons=drawn_weapons)
 
 @app.route("/reset", methods=["POST"])
 def reset():
-    global drawn_weapons
-    drawn_weapons = []
-    return render_template("start.html")
+   global drawn_weapons
+   drawn_weapons = []
+   return render_template("start.html")
 
 if __name__ == "__main__":
     app.run(debug=True)

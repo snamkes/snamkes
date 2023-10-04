@@ -3,62 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <title>무기 확률 뽑기</title>
+    <style>
+        .gray-text {
+            color: gray;
+        }
+
+        .yellow-text {
+            color: yellow;
+        }
+
+        .blue-text {
+            color: blue;
+        }
+
+        .red-text {
+            color: red;
+        }
+
+        .dark-red-text {
+            color: darkred;
+        }
+
+        .purple-text {
+            color: purple;
+        }
+    </style>
 </head>
+
 <body>
     <h1>무기 확률 뽑기</h1>
+    
     <form method="POST" action="/" id="drawForm">
         <label for="num_draws">뽑을 횟수:</label>
         <input type="number" id="num_draws" name="num_draws" min="1" required>
         <input type="submit" value="무기 뽑기">
     </form>
+
     <div id="resultsContainer">
-        {% if drawn_weapons %}
-        <h2>뽑은 무기:</h2>
-        <ul>
-            {% for idx, weapon in enumerate(drawn_weapons, start=1) %}
-            <li>{{ "뽑기 {}번째: {}".format(idx, weapon) }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+        <!-- 무기 결과가 여기에 동적으로 추가됩니다. -->
     </div>
+
     <form method="POST" action="/reset">
         <input type="submit" value="초기화">
     </form>
-    
-    <!-- 여기에 JavaScript 코드 추가 -->
+
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('drawForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // 폼 제출 기본 동작 막기
-            var numDraws = document.getElementById('num_draws').value;
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('drawForm').addEventListener('submit', function(event) {
+                event.preventDefault(); // 폼 제출 기본 동작 막기
+                var numDraws = document.getElementById('num_draws').value;
 
-            // 서버로 요청 보내기
-            fetch('/', {
-                method: 'POST',
-                body: new URLSearchParams({ num_draws: numDraws }),
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
-            })
-            .then(response => response.text())
-            .then(data => {
-                // 서버로부터 받은 데이터를 화면에 표시
-                var resultsContainer = document.getElementById('resultsContainer');
-                resultsContainer.innerHTML = ''; // 이전 결과 초기화
-
-                // 무기 문자열을 개행 문자를 기준으로 나누어 출력
-                var weapons = data.split('\n');
-                weapons.forEach(function(weapon, index) {
-                    var weaponElement = document.createElement('p');
-                    weaponElement.textContent = '뽑기 ' + (index + 1) + '번째: ' + weapon;
-                    resultsContainer.appendChild(weaponElement);
+                // 서버로 요청 보내기
+                fetch('/', {
+                    method: 'POST',
+                    body: new URLSearchParams({ num_draws: numDraws }),
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // 서버로부터 받은 데이터를 화면에 표시
+                    var resultsContainer = document.getElementById('resultsContainer');
+                    resultsContainer.innerHTML = ''; // 이전 결과 초기화
+                    var resultsList = document.createElement('ul');
+                    data.drawn_weapons.forEach(function(weapon, index) {
+                        var listItem = document.createElement('li');
+                        var textClass = '';
+                        if (weapon === '5강 강화석' || weapon === '6강 강화석'|| weapon === '완전체 정수 5개'|| weapon === '완전체 정수 10개' ) {
+                            textClass = 'gray-text'
+                        }
+                        if (weapon === '블럭박스' || weapon === '에픽박스'|| weapon === '유니크박스'|| weapon === '광산 입장권' ) {
+                            textClass = 'yellow-text';
+                            }    
+                        if (weapon === '렌독 4주년 칭호' || weapon === '렌독 포인트 600') {
+                            textClass = 'blue-text'
+                        }
+                        if (weapon === '미스틱박스' || weapon === '고급 복주머니'|| weapon === '자가부양동력장치') {
+                            textClass = 'red-text';
+                        }
+                        if (weapon === '레전드 랜덤박스' || weapon === '포에버 스페이스 로켓') {
+                            textClass = 'darked-text'
+                        }
+                        if (weapon === '멜다의 녹아버린 완드' || weapon === '녹퍼소') {
+                            textClass = 'purple-text';
+                        }
+                        listItem.innerHTML = '뽑기 ' + (index + 1) + '번째: <span class="' + textClass + '">' + weapon + '</span>';
+                        resultsList.appendChild(listItem);
+                    });
+                    resultsContainer.appendChild(resultsList);
+                })
+                .catch(error => {
+                    console.error('무기 뽑기 오류:', error);
                 });
-            })
-            .catch(error => {
-                console.error('무기 뽑기 오류:', error);
             });
         });
-    });
     </script>
 </body>
 </html>
