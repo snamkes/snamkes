@@ -46,13 +46,13 @@ def index():
 
         return jsonify(drawn_weapons=drawn_weapons)
 
-    return render_template("start.html", drawn_weapons=drawn_weapons)
+    return render_template("index.html", drawn_weapons=drawn_weapons)
 
 @app.route("/reset", methods=["POST"])
 def reset():
    global drawn_weapons
    drawn_weapons = []
-   return render_template("start.html")
+   return render_template("index.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
