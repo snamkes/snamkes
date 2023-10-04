@@ -36,8 +36,8 @@ def choose_reward():
 def index():
     if request.method == "POST":
         reward = choose_reward()
-        return render_template("index.html", reward=reward)
-    return render_template("index.html")
+        return render_template("start.html", reward=reward)
+    return render_template("start.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
