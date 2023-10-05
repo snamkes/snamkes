@@ -44,7 +44,7 @@ def index():
         # 무기 뽑기
         drawn_weapons = [choose_reward() for _ in range(num_draws)]
 
-        return jsonify(drawn_weapons=drawn_weapons)
+        return jsonify({"drawn_weapons": drawn_weapons})
 
     return render_template("index.html", drawn_weapons=drawn_weapons)
 
